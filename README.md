@@ -2,6 +2,8 @@
 
 同じ Angular コンポーネントを公式の AOT コンパイラ（ngc）と Oxc に渡し、生成コードと診断をブラウザで並べて読む小さなアプリです。この比較画面自体も、Angular CLI と Oxc + Vite のどちらでも動きます。
 
+公開デモを開く　[Oxc + Vite 版](https://nagahara-naoki.github.io/oxc-angular-starter/) · [Angular CLI 版](https://nagahara-naoki.github.io/oxc-angular-starter/angular/)
+
 ![Angular と Oxc のコンパイル結果を横に並べた画面](docs/comparison.png)
 
 ## 試す
