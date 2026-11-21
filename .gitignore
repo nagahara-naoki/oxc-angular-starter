@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.angular/
+.compiler-output/
+src/generated/
+.DS_Store

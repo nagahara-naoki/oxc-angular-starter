@@ -1,0 +1,36 @@
+<header class="topbar">
+  <div class="top-inner"><a class="brand" href="./"><span class="mark" aria-hidden="true">λ</span> Compiler Lab</a>
+    <a class="repo" href="https://github.com/nagahara-naoki/oxc-angular-starter">GitHub ↗</a></div>
+</header>
+<main>
+  <div class="hero">
+    <h1>Angular <span>&amp;</span> Oxc</h1>
+    <p>同じ Angular コンポーネントを、2つのコンパイラで比較する。</p>
+    <small>この画面のビルド <b>{{ compiler }}</b></small>
+  </div>
+  <div class="choices" role="group" aria-label="比較するサンプル">
+    @for (example of cases; track example.file) {
+      <button type="button" [attr.aria-pressed]="example.file === selected().file" (click)="selected.set(example)">{{ example.title }}</button>
+    }
+  </div>
+  <section class="source">
+    <div class="section-title"><h2>共通の入力</h2><span>{{ selected().file }}</span></div>
+    @if (previewCounter()) {
+      <div class="demo"><span>実行結果</span><lab-counter /></div>
+    } @else {
+      <p class="snippet"><code>{{ selected().template }}</code></p>
+    }
+    <details><summary>コンポーネントのソースを見る</summary><pre><code>{{ selected().source }}</code></pre></details>
+  </section>
+  <section aria-label="両方のコンパイル結果" class="results">
+    @for (panel of selected().panels; track panel.id) {
+      <article [class.oxc]="panel.id === 'oxc'">
+        <div class="panelhead"><div><h2>{{ panel.name }}</h2><span class="version">{{ panel.version }}</span></div>
+          <strong [class.error]="!panel.ok">{{ panel.ok ? 'コンパイル成功' : 'コンパイルエラー' }}</strong>
+        </div>
+        <h3>{{ panel.ok ? '生成されたテンプレート関数' : 'コンパイラの診断' }}</h3>
+        <pre tabindex="0" [attr.aria-label]="panel.name + ' の出力'"><code>{{ panel.output }}</code></pre>
+      </article>
+    }
+  </section>
+</main>

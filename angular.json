@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": { "analytics": false },
+  "projects": {
+    "lab": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "index": { "input": "src/angular-index.html", "output": "index.html" },
+            "tsConfig": "tsconfig.json",
+            "outputPath": "dist/angular",
+            "aot": true,
+            "define": { "APP_COMPILER": "\"Angular CLI + ngc\"" }
+          }
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": { "buildTarget": "lab:build" }
+        }
+      }
+    }
+  }
+}
