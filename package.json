@@ -6,6 +6,7 @@
   "engines": { "node": "^22.22.3 || ^24.15.0 || >=26.0.0" },
   "scripts": {
     "start": "npm run dev:oxc",
+    "benchmark": "npm run compare && node scripts/benchmark.mjs",
     "compare": "node scripts/compare.mjs",
     "dev:oxc": "npm run compare && vite --port 5173",
     "dev:angular": "npm run compare && ng serve --port 4200",

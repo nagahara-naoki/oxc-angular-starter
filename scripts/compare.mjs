@@ -1,37 +1,14 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { createCompilerHost, formatDiagnostics, performCompilation, readConfiguration } from '@angular/compiler-cli';
-import { transformAngularFileSync } from '@oxc-angular/vite/api';
 import ts from 'typescript';
+import { angularVersion, compileAngular, compileOxc, oxcVersion, root } from './compilers.mjs';
 
-const root = fileURLToPath(new URL('../', import.meta.url));
 const generated = resolve(root, 'src/generated');
 const artifacts = resolve(root, '.compiler-output');
 const cases = [
   { file: 'counter.ts', title: 'シグナルカウンター' },
   { file: 'missing-phase.ts', title: 'フェーズを省略したイベント' },
 ];
-const versionOf = async name =>
-  JSON.parse(await readFile(resolve(root, 'node_modules', name, 'package.json'), 'utf8')).version;
-const angularVersion = await versionOf('@angular/core');
-const oxcVersion = await versionOf('@oxc-angular/vite');
-const [major, minor, patch] = angularVersion.split('.').map(Number);
-const config = readConfiguration(resolve(root, 'tsconfig.json'));
-if (config.errors.length) throw new Error(formatDiagnostics(config.errors));
-
-function compileAngular(file) {
-  const options = { ...config.options, rootDir: resolve(root, 'fixtures'), noEmitOnError: true };
-  const host = createCompilerHost({ options });
-  let code = '';
-  host.writeFile = (name, contents) => {
-    if (name.endsWith('.js')) code = contents;
-  };
-  const { diagnostics } = performCompilation({ rootNames: [file], options, host });
-  const errors = diagnostics.filter(d => d.category === ts.DiagnosticCategory.Error);
-  return { code, errors: errors.map(d => formatDiagnostics([d])) };
-}
-
 // Use the same printer for both compilers so indentation alone does not look like a difference.
 function templateFunction(code) {
   const ast = ts.createSourceFile('output.ts', code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
@@ -78,12 +55,11 @@ for (const { file, title } of cases) {
   const path = resolve(root, 'fixtures', file);
   const source = await readFile(path, 'utf8');
   const angular = compileAngular(path);
-  const oxc = transformAngularFileSync(source, path, { angularVersion: { major, minor, patch } },
-    { templates: {}, styles: {} });
+  const oxc = compileOxc(path, source);
   const panels = [];
   for (const [id, name, version, code, errors] of [
     ['ngc', 'Angular', angularVersion, angular.code, angular.errors],
-    ['oxc', 'Oxc', oxcVersion, oxc.code, oxc.errors.map(e => e.message)],
+    ['oxc', 'Oxc', oxcVersion, oxc.code, oxc.errors],
   ]) {
     const ok = errors.length === 0;
     const diagnostic = errors.join('\n').replace(/\x1b\[[0-9;]*m/g, '').replaceAll(root, '').trim();

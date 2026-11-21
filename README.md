@@ -4,7 +4,7 @@
 
 公開デモを開く　[Oxc + Vite 版](https://nagahara-naoki.github.io/oxc-angular-starter/) · [Angular CLI 版](https://nagahara-naoki.github.io/oxc-angular-starter/angular/)
 
-![Angular と Oxc のコンパイル結果を横に並べた画面](docs/comparison.png)
+![Angular CLI と Oxc + Vite のビルド時間を比較するグラフ](docs/comparison.png)
 
 ## 試す
 
@@ -18,6 +18,19 @@ npm start
 ```
 
 **Oxc + Vite** で起動した画面は <http://localhost:5173>。もう一つのターミナルで `npm run dev:angular` を実行すると、**Angular CLI の AOT** で同じ画面を <http://localhost:4200> に起動します。どちらの画面にも両コンパイラの比較結果が表示されます。ページ上部の「この画面のビルド」が、そのページを生成した側です。
+
+## ビルド速度を比較する
+
+[公開グラフ](https://nagahara-naoki.github.io/oxc-angular-starter/#benchmark)で「本番ビルド」と「単一コンポーネント」を切り替えられます。棒はゼロを起点にした同一目盛りで、各方式6回の中央値を示します。時間差の割合は `(Angular の中央値 − Oxc の中央値) / Angular の中央値` から求めています。計測環境と各回の値はグラフ下で確認できます。
+
+| 範囲 | Angular | Oxc |
+| --- | --- | --- |
+| 本番ビルド | このアプリの `ng build` | 同じアプリの `vite build`。いずれも新しいプロセスの起動から出力完了まで |
+| 単一コンポーネント | `counter.ts` を新しい TypeScript プログラムでコンパイル。型検査・ファイル読み込みを含む | 同じソースを読み込み済みの Oxc API に渡して単一ファイルを変換 |
+
+`npm run benchmark` で再計測できます。各方式1回の予熱後、先に測る方式を交替させ、同じマシンで直列実行します。依存は共通でインストール済み。本番ビルドは空の出力・プロジェクトキャッシュで毎回開始し、OS のファイルキャッシュは保持します。ファイルの準備と比較データ生成は計測外です。
+
+ローカルでは同梱の [計測結果](public/benchmark.json) を表示します。GitHub Pages ではデプロイごとに Actions ランナー上で再計測し、その両ビルドで同じ結果を表示します。小規模なこのアプリを対象にした値で、規模や型検査、バンドラーの違いが結果に影響します。[計測スクリプト](scripts/benchmark.mjs)
 
 ## 二つの比較例
 

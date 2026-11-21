@@ -8,6 +8,7 @@
     <p>同じ Angular コンポーネントを、2つのコンパイラで比較する。</p>
     <small>この画面のビルド <b>{{ compiler }}</b></small>
   </div>
+  <lab-speed-chart id="benchmark"></lab-speed-chart>
   <div class="choices" role="group" aria-label="比較するサンプル">
     @for (example of cases; track example.file) {
       <button type="button" [attr.aria-pressed]="example.file === selected().file" (click)="selected.set(example)">{{ example.title }}</button>

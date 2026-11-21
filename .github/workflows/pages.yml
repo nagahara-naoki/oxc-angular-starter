@@ -27,7 +27,7 @@ jobs:
       - run: npm ci
       - name: Build the comparison and both applications
         run: |
-          npm run compare
+          npm run benchmark
           npm exec -- vite build --base ./
           npm exec -- ng build --base-href ./
           mkdir -p dist/oxc/angular

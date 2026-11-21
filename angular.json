@@ -14,6 +14,7 @@
             "browser": "src/main.ts",
             "index": { "input": "src/angular-index.html", "output": "index.html" },
             "tsConfig": "tsconfig.json",
+            "assets": [{ "glob": "benchmark.json", "input": "public", "output": "/" }],
             "outputPath": "dist/angular",
             "aot": true,
             "define": { "APP_COMPILER": "\"Angular CLI + ngc\"" }
