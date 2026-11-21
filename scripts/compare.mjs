@@ -6,8 +6,8 @@ import { angularVersion, compileAngular, compileOxc, oxcVersion, root } from './
 const generated = resolve(root, 'src/generated');
 const artifacts = resolve(root, '.compiler-output');
 const cases = [
-  { file: 'counter.ts', title: 'シグナルカウンター' },
-  { file: 'missing-phase.ts', title: 'フェーズを省略したイベント' },
+  { file: 'counter.ts', title: 'Signal counter' },
+  { file: 'missing-phase.ts', title: 'Missing event phase' },
 ];
 // Use the same printer for both compilers so indentation alone does not look like a difference.
 function templateFunction(code) {

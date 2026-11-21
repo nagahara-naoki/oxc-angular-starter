@@ -8,7 +8,7 @@
     "angular": "22.2.4",
     "oxc": "0.0.45",
     "vite": "8.3.4",
-    "runner": "ローカル"
+    "runner": "Local"
   },
   "build": {
     "angular": [

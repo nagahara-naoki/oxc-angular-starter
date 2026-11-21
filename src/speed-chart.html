@@ -1,49 +1,37 @@
 <section class="speed" aria-labelledby="speed-heading">
-  <div class="heading">
-    <div><h2 id="speed-heading">ビルド速度</h2><p>同じ入力を交互に測定。棒が短いほど処理時間が短くなります。</p></div>
-    <div role="group" aria-label="計測範囲" class="switcher">
+  <div class="section-heading">
+    <h2 id="speed-heading">Build times</h2>
+    <div role="group" aria-label="Measurement">
       @for (option of options; track option.id) {
         <button type="button" (click)="metric.set(option.id)" [attr.aria-pressed]="metric() === option.id">{{ option.label }}</button>
       }
     </div>
   </div>
   @if (chart(); as c) {
-    <div class="plot-card">
-      <div class="plot-heading">
-        <h3>{{ metric() === 'build' ? 'アプリ全体の本番ビルド' : 'counter.ts のコンパイル' }}</h3>
-        <span>{{ c.samples.length }} 回の中央値</span>
-      </div>
-      <div class="body-grid">
-        <div class="plot">
-          @for (row of c.rows; track row.engine) {
-            <div class="series">
-              <div class="series-label"><span>{{ row.name }}</span><b>{{ row.value }} <small>{{ c.unit }}</small></b></div>
-              <div class="track" aria-hidden="true"><div class="bar" [class.oxc-bar]="row.engine === 'oxc'" [style.width.%]="row.width"></div></div>
-            </div>
-          }
-          <div class="axis" aria-hidden="true">@for (t of c.ticks; track $index) { <span>{{ t }}</span> }</div>
+    <figure>
+      <figcaption>Median of {{ c.samples.length }} runs · {{ c.unit === 's' ? 'seconds' : 'milliseconds' }}</figcaption>
+      @for (row of c.rows; track row.engine) {
+        <div class="series">
+          <span>{{ row.name }}</span>
+          <div class="track" aria-hidden="true"><div class="bar" [class.oxc-bar]="row.engine === 'oxc'" [style.width.%]="row.width"></div></div>
+          <b>{{ row.value }} {{ c.unit }}</b>
         </div>
-        <div class="difference">
-          <span>Angular 比の所要時間</span>
-          <div><b>{{ c.percent }}</b><small>%</small></div>
-          <span>Oxc で{{ c.change }}</span>
-        </div>
-      </div>
-      <p class="scope">@if (metric() === 'build') {
-        プロセス起動から本番バンドルの出力まで。Angular CLI と Vite のバンドル・最適化の違いも含みます。
-      } @else {
-        読み込み済みの API で同じファイルを処理。ngc は TypeScript プログラムの作成・型検査を含み、Oxc は単一ファイルを変換します。
-      }</p>
-    </div>
+      }
+      <div class="scale" aria-hidden="true"><div>@for (t of c.ticks; track $index) { <span>{{ t }}</span> }</div></div>
+    </figure>
+    <p class="difference">Oxc took <b>{{ c.percent }}% {{ c.change }} time</b> in this run.</p>
     @if (report(); as r) {
-      <div class="foot"><span>{{ r.environment.runner }} · {{ r.environment.platform }}/{{ r.environment.arch }} · {{ c.date }} 計測</span>
-        <details><summary>計測条件と各回の数値</summary>
-          <p>{{ r.environment.cpu }} · Node {{ r.environment.node }} · Angular {{ r.environment.angular }} · Oxc {{ r.environment.oxc }} · Vite {{ r.environment.vite }}</p>
-          <p>各方式を1回ずつ予熱後、先に測る方式を交替して6回ずつ直列実行。本番ビルドは毎回、新しい作業フォルダーとプロセスを使用します。依存のインストールと比較データの生成は計測外です。</p>
-          <table><caption>各回の所要時間（{{ c.unit }}）</caption><thead><tr><th scope="col">回</th><th scope="col">Angular</th><th scope="col">Oxc</th></tr></thead>
-            <tbody>@for (s of c.samples; track $index) { <tr><th scope="row">{{ $index + 1 }}</th><td>{{ s.angular }}</td><td>{{ s.oxc }}</td></tr> }</tbody></table>
-        </details>
-      </div>
+      <p class="scope">@if (metric() === 'build') {
+        Includes process startup, bundling and optimization.
+      } @else {
+        ngc creates a TypeScript program and checks types. Oxc transforms a single file.
+      } {{ r.environment.runner }} · {{ r.environment.platform }}/{{ r.environment.arch }} · {{ c.date }} UTC</p>
+      <details><summary>Method and raw timings</summary>
+        <p>{{ r.environment.cpu }} · Node {{ r.environment.node }} · Angular {{ r.environment.angular }} · Oxc {{ r.environment.oxc }} · Vite {{ r.environment.vite }}</p>
+        <p>One warm-up per tool, then six timed pairs in alternating order. Each production build starts in a fresh directory and process. Dependency installation and fixture preparation finish before timing starts.</p>
+        <table><caption>Elapsed time ({{ c.unit }})</caption><thead><tr><th scope="col">Run</th><th scope="col">Angular</th><th scope="col">Oxc</th></tr></thead>
+          <tbody>@for (s of c.samples; track $index) { <tr><th scope="row">{{ $index + 1 }}</th><td>{{ s.angular }}</td><td>{{ s.oxc }}</td></tr> }</tbody></table>
+      </details>
     }
-  } @else if (failed()) { <p>計測結果を読み込めませんでした。</p> } @else { <p>計測結果を読み込み中…</p> }
+  } @else if (failed()) { <p>Could not load the benchmark results.</p> } @else { <p>Loading benchmark results…</p> }
 </section>

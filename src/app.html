@@ -1,37 +1,36 @@
-<header class="topbar">
-  <div class="top-inner"><a class="brand" href="./"><span class="mark" aria-hidden="true">λ</span> Compiler Lab</a>
-    <a class="repo" href="https://github.com/nagahara-naoki/oxc-angular-starter">GitHub ↗</a></div>
-</header>
 <main>
-  <div class="hero">
-    <h1>Angular <span>&amp;</span> Oxc</h1>
-    <p>同じ Angular コンポーネントを、2つのコンパイラで比較する。</p>
-    <small>この画面のビルド <b>{{ compiler }}</b></small>
-  </div>
+  <header class="page-header">
+    <div><h1>Angular vs. Oxc</h1><p>Build times and compiler output for the same Angular source.</p></div>
+    <a href="https://github.com/nagahara-naoki/oxc-angular-starter">GitHub</a>
+  </header>
   <lab-speed-chart id="benchmark"></lab-speed-chart>
-  <div class="choices" role="group" aria-label="比較するサンプル">
-    @for (example of cases; track example.file) {
-      <button type="button" [attr.aria-pressed]="example.file === selected().file" (click)="selected.set(example)">{{ example.title }}</button>
-    }
-  </div>
-  <section class="source">
-    <div class="section-title"><h2>共通の入力</h2><span>{{ selected().file }}</span></div>
-    @if (previewCounter()) {
-      <div class="demo"><span>実行結果</span><lab-counter /></div>
-    } @else {
-      <p class="snippet"><code>{{ selected().template }}</code></p>
-    }
-    <details><summary>コンポーネントのソースを見る</summary><pre><code>{{ selected().source }}</code></pre></details>
+  <section aria-labelledby="output-heading">
+    <div class="section-heading">
+      <h2 id="output-heading">Compiler output</h2>
+      <div role="group" aria-label="Example">
+        @for (example of cases; track example.file) {
+          <button type="button" [attr.aria-pressed]="example.file === selected().file" (click)="selected.set(example)">{{ example.title }}</button>
+        }
+      </div>
+    </div>
+    <div class="source">
+      <code>{{ selected().file }}</code>
+      @if (previewCounter()) {
+        <lab-counter />
+      } @else {
+        <pre><code>{{ selected().template }}</code></pre>
+      }
+      <details><summary>View component source</summary><pre><code>{{ selected().source }}</code></pre></details>
+    </div>
+    <div class="results">
+      @for (panel of selected().panels; track panel.id) {
+        <article>
+          <h3>{{ panel.name }} <small>{{ panel.version }}</small></h3>
+          <p>{{ panel.ok ? 'Compiled template' : 'Compilation error' }}</p>
+          <pre tabindex="0" [attr.aria-label]="panel.name + ' output'"><code>{{ panel.output }}</code></pre>
+        </article>
+      }
+    </div>
   </section>
-  <section aria-label="両方のコンパイル結果" class="results">
-    @for (panel of selected().panels; track panel.id) {
-      <article [class.oxc]="panel.id === 'oxc'">
-        <div class="panelhead"><div><h2>{{ panel.name }}</h2><span class="version">{{ panel.version }}</span></div>
-          <strong [class.error]="!panel.ok">{{ panel.ok ? 'コンパイル成功' : 'コンパイルエラー' }}</strong>
-        </div>
-        <h3>{{ panel.ok ? '生成されたテンプレート関数' : 'コンパイラの診断' }}</h3>
-        <pre tabindex="0" [attr.aria-label]="panel.name + ' の出力'"><code>{{ panel.output }}</code></pre>
-      </article>
-    }
-  </section>
+  <footer>This page was built with {{ compiler }}.</footer>
 </main>

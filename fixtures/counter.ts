@@ -3,7 +3,7 @@ import { Component, signal } from '@angular/core';
 @Component({
   selector: 'lab-counter',
   template: `<output aria-live="polite">{{ count() }}</output>
-<button type="button" (click)="increment()">1 増やす</button>`,
+<button type="button" (click)="increment()">Increment</button>`,
 })
 export class Counter {
   readonly count = signal(0);

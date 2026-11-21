@@ -64,7 +64,7 @@ const report = {
   environment: {
     platform: process.platform, arch: process.arch, cpu: cpus()[0]?.model ?? 'unknown',
     node: process.version, angular: angularVersion, oxc: oxcVersion, vite: await versionOf('vite'),
-    runner: process.env.GITHUB_ACTIONS === 'true' ? 'GitHub Actions' : 'ローカル',
+    runner: process.env.GITHUB_ACTIONS === 'true' ? 'GitHub Actions' : 'Local',
   },
   build, component,
 };
